@@ -146,32 +146,47 @@ Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |
     }
 
 # ======================
-# 7. AVAILABLE USERS
+# 7. LOCAL USERS & PERMISSIONS
 # ======================
 Write-Host ""
-Write-Host "👤 AVAILABLE USERS"
-Write-Host "-----------------------------------------"
-Get-LocalUser | Where-Object {$_.Enabled -eq $true -and $_.PasswordRequired -eq $true} | ForEach-Object {
-    $user = $_.Name
-    Write-Host "User: $user"
+Write-Host "👤 LOCAL USERS & PERMISSIONS"
+Write-Host "-----------------------------"
 
-    # Groups
-    $groups = (Get-LocalGroupMember -Member $user | Select-Object -ExpandProperty Group).Join(', ')
-    Write-Host "  Groups: $groups"
+$localUsers = Get-LocalUser | Where-Object { $_.Enabled -eq $true }
 
-    # Home directory and permissions
-    $home = $_.SID.Translate([System.Security.Principal.NTAccount]).Value
-    $homeDir = "$env:SystemDrive\Users\$user"
+foreach ($user in $localUsers) {
+
+    Write-Host ""
+    Write-Host "User: $($user.Name)"
+    Write-Host "  Enabled: $($user.Enabled)"
+    Write-Host "  Password Required: $($user.PasswordRequired)"
+
+    # Group Memberships (Primary permission source)
+    $userGroups = Get-LocalGroup | ForEach-Object {
+        try {
+            if (Get-LocalGroupMember $_.Name -Member $user.Name -ErrorAction Stop) {
+                $_.Name
+            }
+        } catch {}
+    }
+
+    if ($userGroups) {
+        Write-Host "  Groups: $($userGroups -join ', ')"
+    } else {
+        Write-Host "  Groups: None"
+    }
+
+    # Home Directory Permissions
+    $homeDir = "C:\Users\$($user.Name)"
     if (Test-Path $homeDir) {
-        $acl = Get-Acl $homeDir
-        Write-Host "  Home Dir Permissions:"
-        $acl.Access | ForEach-Object {
-            Write-Host "    Identity: $($_.IdentityReference), Rights: $($_.FileSystemRights), Type: $($_.AccessControlType)"
+        Write-Host "  Home Directory: $homeDir"
+        Write-Host "  NTFS Permissions:"
+        (Get-Acl $homeDir).Access | ForEach-Object {
+            Write-Host "    $($_.IdentityReference) : $($_.FileSystemRights) [$($_.AccessControlType)]"
         }
     } else {
-        Write-Host "  Home Dir Permissions: N/A"
+        Write-Host "  Home Directory: Not Found"
     }
-    Write-Host ""
 }
 
 Write-Host ""
