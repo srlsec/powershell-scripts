@@ -11,3 +11,7 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/optimize-windows.ps1").Content
 ```
+### Activate Windows / Office
+```
+irm https://get.activated.win | iex
+```
