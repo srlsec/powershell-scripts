@@ -18,6 +18,7 @@ irm https://get.activated.win | iex
 ### Allow insecure guest logons 
 ```
 Powershell run as administrator
+
 Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Force
 Set-SmbClientConfiguration -RequireSecuritySignature $false -Force
 Set-SmbServerConfiguration -RequireSecuritySignature $false -Force
