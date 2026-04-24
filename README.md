@@ -15,3 +15,10 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 ```
 irm https://get.activated.win | iex
 ```
+### Allow insecure guest logons 
+```
+Powershell as administrator
+Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Force
+Set-SmbClientConfiguration -RequireSecuritySignature $false -Force
+Set-SmbServerConfiguration -RequireSecuritySignature $false -Force
+```
