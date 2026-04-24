@@ -1,4 +1,5 @@
 # powershell-scripts
+### Powershell policy execution bypass
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser 
 ```
