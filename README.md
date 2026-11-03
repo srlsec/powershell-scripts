@@ -1,4 +1,4 @@
-# powershell-scripts
+# Powershell Scripts for Sys Admins
 ### Powershell policy execution bypass
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser 
@@ -27,7 +27,7 @@ Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Force
 Set-SmbClientConfiguration -RequireSecuritySignature $false -Force
 Set-SmbServerConfiguration -RequireSecuritySignature $false -Force
 ```
-### Install MS365
+#### Install MS365
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-MS365.ps1").Content
 ```
