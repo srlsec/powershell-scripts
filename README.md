@@ -5,8 +5,10 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 ### Check System Info
 ```
-Min - iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/sysinfo-min.ps1").Content
-Max - iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/systeminfo.ps1").Content
+Min
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/sysinfo-min.ps1").Content
+Max
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/systeminfo.ps1").Content
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/systeminfo.ps1" -UseBasicParsing).Content
 ```
 ### Optimize Windows
