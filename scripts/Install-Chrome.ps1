@@ -1,69 +1,50 @@
 
 # ==========================================
-# Google Chrome Automatic Installer
-# Windows 10 / Windows 11
+# Google Chrome - Automatic Installer
+# Current User | Windows 10/11 64-bit
 # ==========================================
 
 $ErrorActionPreference = "Stop"
 
 $Folder = "$env:LOCALAPPDATA\Chrome-Installer"
-$Installer = "$Folder\ChromeSetup.exe"
+$Installer = "$Folder\ChromeStandaloneSetup64.exe"
 
 $Url = "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi"
 
 try {
-    # Create folder
     New-Item -ItemType Directory -Path $Folder -Force | Out-Null
 
     Write-Host "Downloading Google Chrome..." -ForegroundColor Cyan
 
-    # Download installer
     & curl.exe -fL --retry 5 --retry-delay 3 `
         --connect-timeout 30 `
-        $Url -o "$Folder\ChromeSetup.msi"
+        $Url -o $Installer
 
     if ($LASTEXITCODE -ne 0 -or
-        -not (Test-Path "$Folder\ChromeSetup.msi") -or
-        (Get-Item "$Folder\ChromeSetup.msi").Length -lt 1MB) {
+        -not (Test-Path $Installer) -or
+        (Get-Item $Installer).Length -lt 10MB) {
         throw "Chrome download failed."
     }
 
-    $Installer = "$Folder\ChromeSetup.msi"
+    Write-Host "Download completed." -ForegroundColor Green
 
-    # Verify signature
+    # Verify Google signature
     $Signature = Get-AuthenticodeSignature $Installer
 
     if ($Signature.Status -ne "Valid" -or
         $Signature.SignerCertificate.Subject -notmatch "Google") {
-        throw "Google digital signature verification failed."
+        throw "Google signature verification failed."
     }
 
-    Write-Host "Download verified." -ForegroundColor Green
+    Write-Host "Signature verified." -ForegroundColor Green
 
-    # Silent installation
-    Write-Host "Installing Google Chrome..." -ForegroundColor Yellow
+    # Launch installer
+    Write-Host "Starting Chrome installation..." -ForegroundColor Yellow
 
-    $Process = Start-Process -FilePath "msiexec.exe" `
-        -ArgumentList "/i `"$Installer`" /qn /norestart" `
-        -Wait -PassThru
+    $Process = Start-Process -FilePath $Installer -PassThru
 
-    if ($Process.ExitCode -notin @(0, 3010)) {
-        throw "Chrome installation failed. Exit code: $($Process.ExitCode)"
-    }
-
-    Write-Host "Google Chrome installed successfully!" -ForegroundColor Green
-
-    # Verify installation
-    $ChromePaths = @(
-        "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
-        "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"
-    )
-
-    $Chrome = $ChromePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-
-    if ($Chrome) {
-        Write-Host "Installed at: $Chrome" -ForegroundColor Green
-    }
+    Write-Host "Chrome installer launched." -ForegroundColor Green
+    Write-Host "Complete the installation if prompted."
 
 }
 catch {
