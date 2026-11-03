@@ -24,3 +24,7 @@ Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Force
 Set-SmbClientConfiguration -RequireSecuritySignature $false -Force
 Set-SmbServerConfiguration -RequireSecuritySignature $false -Force
 ```
+### Install MS365
+```
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-MS365.ps1").Content
+```
