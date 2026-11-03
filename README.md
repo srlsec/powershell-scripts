@@ -57,9 +57,9 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Chrome.ps1").Content
 ```
 
-### Install 
+### Install Brave
 ```
-
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Brave.ps1").Content
 ```
 
 ### Install 
