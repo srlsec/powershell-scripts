@@ -52,9 +52,9 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-QuickHeal.ps1").Content
 ```
 
-### Install 
+### Install Google Chrome
 ```
-
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Chrome.ps1").Content
 ```
 
 ### Install 
