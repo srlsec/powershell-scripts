@@ -7,9 +7,10 @@
 $ErrorActionPreference = "Stop"
 
 $Folder = "$env:LOCALAPPDATA\QuickHeal-Installer"
-$Installer = "$Folder\QHIS.exe"
+$Installer = "$Folder\QHISE.exe"
 
-$Url = "https://download.quickheal.com/builds/2700/is/QHIS.EXE"
+$Url = "https://download.quickheal.com/builds/2700/ise/QHISE.EXE"
+
 
 try {
     # Create download directory
