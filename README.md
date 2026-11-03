@@ -28,3 +28,50 @@ Set-SmbServerConfiguration -RequireSecuritySignature $false -Force
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-MS365.ps1").Content
 ```
+
+### Install AnyDesk
+```
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-AnyDesk.ps1").Content
+```
+
+### Install UltraViewer
+```
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-UltraViewer.ps1").Content
+```
+
+### Install Rustdesk
+```
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Rustdesk.ps1").Content
+```
+
+### Install 
+```
+
+```
+
+### Install 
+```
+
+```
+
+### Install 
+```
+
+```
+
+### Install 
+```
+
+```
+
+### Install 
+```
+
+```
+
+### Install 
+```
+
+```
+
+
