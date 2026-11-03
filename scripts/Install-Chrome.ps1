@@ -10,7 +10,7 @@ $Folder = "$env:LOCALAPPDATA\Chrome-Installer"
 $Installer = "$Folder\ChromeStandaloneSetup64.exe"
 $ChromePath = "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
 
-$Url = "https://dl.google.com/chrome/direct/ChromeStandaloneSetup64.exe"
+$Url = "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi"
 
 try {
     # Create folder
