@@ -1,9 +1,9 @@
 
 # ==========================================
-# UltraViewer - Current User Download & Run
+# UltraViewer - Download & Run
 # Windows 10 / Windows 11
-# No Explicit Administrator Elevation
-# Publisher Name Check: Disabled
+# Standard User Execution
+# Publisher Name Verification: Disabled
 # ==========================================
 
 $ErrorActionPreference = "Stop"
@@ -34,24 +34,25 @@ try {
 
     Write-Host "Download completed." -ForegroundColor Green
 
-    # Verify digital signature validity only
+    # Digital signature validation only
+    # No publisher-name matching
     $Signature = Get-AuthenticodeSignature -FilePath $Installer
 
     if ($Signature.Status -ne "Valid") {
-        throw "Installer signature is not valid. Status: $($Signature.Status)"
+        throw "Installer signature validation failed: $($Signature.Status)"
     }
 
     Write-Host "Digital signature is valid." -ForegroundColor Green
 
-    # Launch installer without explicitly requesting elevation
+    # Launch without explicitly requesting administrator elevation
     Write-Host "Launching UltraViewer setup..." -ForegroundColor Yellow
 
     $Process = Start-Process -FilePath $Installer -PassThru
 
-    Write-Host "Setup launched successfully." -ForegroundColor Green
+    Write-Host "UltraViewer setup launched." -ForegroundColor Green
     Write-Host "Process ID: $($Process.Id)" -ForegroundColor Gray
-    Write-Host "Complete the installation if prompted."
 
+    Write-Host "Complete the installation if prompted." -ForegroundColor Yellow
     Write-Host "Administrator permission may still be required." -ForegroundColor Yellow
 }
 catch {
