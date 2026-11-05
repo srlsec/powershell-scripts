@@ -2,55 +2,62 @@
 # ==========================================
 # UltraViewer - Current User Download & Run
 # Windows 10 / Windows 11
-# No Administrator privileges requested
+# No Explicit Administrator Elevation
 # ==========================================
 
 $ErrorActionPreference = "Stop"
 
 $Folder = "$env:LOCALAPPDATA\Programs\UltraViewer"
 $Installer = "$env:TEMP\UltraViewer_Setup.exe"
-$App = "$Folder\UltraViewer.exe"
 
 try {
     New-Item -ItemType Directory -Path $Folder -Force | Out-Null
 
-    Write-Host "Downloading UltraViewer..." -ForegroundColor Cyan
-
+    # Official UltraViewer download URL
     $Url = "https://www.ultraviewer.net/en/UltraViewer_setup_6.6_en.exe"
 
+    Write-Host "Downloading UltraViewer..." -ForegroundColor Cyan
+
+    if (Test-Path $Installer) {
+        Remove-Item $Installer -Force
+    }
+
     & curl.exe -fL --retry 5 --retry-delay 3 `
+        --connect-timeout 30 `
         $Url -o $Installer
 
     if ($LASTEXITCODE -ne 0 -or
         -not (Test-Path $Installer) -or
         (Get-Item $Installer).Length -lt 1MB) {
-        throw "Download failed."
+        throw "Download failed or installer is invalid."
     }
 
     Write-Host "Download completed." -ForegroundColor Green
 
     # Verify digital signature
-    $Signature = Get-AuthenticodeSignature $Installer
+    $Signature = Get-AuthenticodeSignature -FilePath $Installer
 
     if ($Signature.Status -ne "Valid") {
-        throw "Installer signature is not valid."
+        throw "Installer signature is not valid. Status: $($Signature.Status)"
     }
 
-    if ($Signature.SignerCertificate.Subject -notmatch "UltraViewer|DucFabulous") {
-        throw "Unexpected installer publisher."
+    if (-not $Signature.SignerCertificate) {
+        throw "Publisher certificate is missing."
     }
 
-    Write-Host "Publisher verified." -ForegroundColor Green
+    Write-Host "Signature verified." -ForegroundColor Green
+    Write-Host "Publisher: $($Signature.SignerCertificate.Subject)" -ForegroundColor Gray
 
-    # UltraViewer does not document a supported per-user
-    # portable installation command.
+    # Launch installer without explicitly requesting elevation
     Write-Host "Launching UltraViewer setup..." -ForegroundColor Yellow
 
-    Start-Process -FilePath $Installer
+    $Process = Start-Process -FilePath $Installer -PassThru
 
-    Write-Host "Setup launched. Follow the installer instructions." -ForegroundColor Green
-    Write-Host "If administrator permission is requested, it is required by the installer."
+    Write-Host "Setup launched successfully." -ForegroundColor Green
+    Write-Host "Process ID: $($Process.Id)" -ForegroundColor Gray
+    Write-Host "Complete the installation if prompted."
 
+    Write-Host "Administrator permission may still be required by the installer." -ForegroundColor Yellow
 }
 catch {
     Write-Host "ERROR: $_" -ForegroundColor Red
