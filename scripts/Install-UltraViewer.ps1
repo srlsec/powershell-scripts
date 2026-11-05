@@ -3,6 +3,7 @@
 # UltraViewer - Current User Download & Run
 # Windows 10 / Windows 11
 # No Explicit Administrator Elevation
+# Publisher Name Check: Disabled
 # ==========================================
 
 $ErrorActionPreference = "Stop"
@@ -13,7 +14,6 @@ $Installer = "$env:TEMP\UltraViewer_Setup.exe"
 try {
     New-Item -ItemType Directory -Path $Folder -Force | Out-Null
 
-    # Official UltraViewer download URL
     $Url = "https://www.ultraviewer.net/en/UltraViewer_setup_6.6_en.exe"
 
     Write-Host "Downloading UltraViewer..." -ForegroundColor Cyan
@@ -34,19 +34,14 @@ try {
 
     Write-Host "Download completed." -ForegroundColor Green
 
-    # Verify digital signature
+    # Verify digital signature validity only
     $Signature = Get-AuthenticodeSignature -FilePath $Installer
 
     if ($Signature.Status -ne "Valid") {
         throw "Installer signature is not valid. Status: $($Signature.Status)"
     }
 
-    if (-not $Signature.SignerCertificate) {
-        throw "Publisher certificate is missing."
-    }
-
-    Write-Host "Signature verified." -ForegroundColor Green
-    Write-Host "Publisher: $($Signature.SignerCertificate.Subject)" -ForegroundColor Gray
+    Write-Host "Digital signature is valid." -ForegroundColor Green
 
     # Launch installer without explicitly requesting elevation
     Write-Host "Launching UltraViewer setup..." -ForegroundColor Yellow
@@ -57,7 +52,7 @@ try {
     Write-Host "Process ID: $($Process.Id)" -ForegroundColor Gray
     Write-Host "Complete the installation if prompted."
 
-    Write-Host "Administrator permission may still be required by the installer." -ForegroundColor Yellow
+    Write-Host "Administrator permission may still be required." -ForegroundColor Yellow
 }
 catch {
     Write-Host "ERROR: $_" -ForegroundColor Red
