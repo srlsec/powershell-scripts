@@ -62,9 +62,9 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Brave.ps1").Content
 ```
 
-### Install 
+### Install Avast Free Antivirus
 ```
-
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Avast.ps1").Content
 ```
 
 ### Install 
