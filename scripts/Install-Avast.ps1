@@ -12,10 +12,8 @@ $Installer = "$Folder\AvastSetup.exe"
 $Url = "https://bits.avcdn.net/productfamily_ANTIVIRUS/insttype_FREE/platform_WIN/installertype_ONLINE/build_RELEASE/cookie_mmm_ava_012_999_aak_m?ref=clid_1820503620.1793861930--gdid_aa80b590-e573-4b70-992e-9710ee6ef053--cmid_WDS~en-in~lp-ppc-free-av-brand~~hero~012_aak&alt=en-in"
 
 try {
-    # Create directory
     New-Item -ItemType Directory -Path $Folder -Force | Out-Null
 
-    # Download
     Write-Host "Downloading Avast Free Antivirus..." -ForegroundColor Cyan
 
     & curl.exe -fL --retry 5 --retry-delay 3 `
@@ -23,22 +21,49 @@ try {
         $Url -o $Installer
 
     if ($LASTEXITCODE -ne 0 -or
-        -not (Test-Path $Installer) -or
-        (Get-Item $Installer).Length -lt 1MB) {
+        -not (Test-Path $Installer)) {
         throw "Avast download failed."
     }
 
-    Write-Host "Download completed." -ForegroundColor Green
+    # Check file size
+    $Size = (Get-Item $Installer).Length
 
-    # Verify digital signature
-    $Signature = Get-AuthenticodeSignature $Installer
+    Write-Host "Downloaded size: $([math]::Round($Size / 1KB, 2)) KB" -ForegroundColor Cyan
 
-    if ($Signature.Status -ne "Valid" -or
-        $Signature.SignerCertificate.Subject -notmatch "Avast") {
-        throw "Avast publisher signature verification failed."
+    if ($Size -lt 50KB) {
+        throw "Downloaded file is too small."
     }
 
-    Write-Host "Digital signature verified." -ForegroundColor Green
+    # Check executable file header
+    $Stream = [System.IO.File]::OpenRead($Installer)
+
+    try {
+        $Header = New-Object byte[] 2
+        [void]$Stream.Read($Header, 0, 2)
+    }
+    finally {
+        $Stream.Dispose()
+    }
+
+    if ($Header[0] -ne 0x4D -or $Header[1] -ne 0x5A) {
+        throw "Downloaded file is not a Windows executable (MZ header missing)."
+    }
+
+    # Verify digital signature
+    Write-Host "Verifying Avast signature..." -ForegroundColor Cyan
+
+    $Signature = Get-AuthenticodeSignature $Installer
+
+    if ($Signature.Status -ne "Valid") {
+        throw "Invalid digital signature: $($Signature.Status)"
+    }
+
+    if ($Signature.SignerCertificate.Subject -notmatch "Avast|Gen Digital") {
+        throw "Unexpected publisher: $($Signature.SignerCertificate.Subject)"
+    }
+
+    Write-Host "Publisher: $($Signature.SignerCertificate.Subject)" -ForegroundColor Green
+    Write-Host "Signature verified." -ForegroundColor Green
 
     # Launch installer
     Write-Host "Launching Avast installer..." -ForegroundColor Yellow
@@ -46,7 +71,6 @@ try {
     Start-Process -FilePath $Installer
 
     Write-Host "Avast installer launched successfully." -ForegroundColor Green
-    Write-Host "Follow the installation instructions."
 
 }
 catch {
