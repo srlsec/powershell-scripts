@@ -1,76 +1,82 @@
 
-# ============================================
-# RustDesk - Automatic Download & Installation
-# ============================================
+# ==========================================
+# RustDesk 1.5.1 - Download & Install
+# Windows 10 / Windows 11 (64-bit)
+# Silent Installation
+# No Explicit Administrator Elevation
+# ==========================================
 
-$Folder = "C:\RemoteTools"
-$Installer = "$Folder\RustDesk-Setup.exe"
-$Api = "https://api.github.com/repos/rustdesk/rustdesk/releases/latest"
+$ErrorActionPreference = "Stop"
 
-New-Item -ItemType Directory -Path $Folder -Force | Out-Null
+$Folder = "$env:LOCALAPPDATA\RustDesk-Installer"
+$Installer = "$Folder\rustdesk-1.5.1-x86_64.exe"
 
 try {
-    Write-Host "Fetching latest RustDesk release..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Path $Folder -Force | Out-Null
 
-    $Release = Invoke-RestMethod `
-        -Uri $Api `
-        -Headers @{
-            "User-Agent" = "PowerShell-RustDesk-Installer"
-            "Accept" = "application/vnd.github+json"
-        }
+    # Official GitHub release URL
+    $Url = "https://github.com/rustdesk/rustdesk/releases/download/1.5.1/rustdesk-1.5.1-x86_64.exe"
 
-    $Architecture = if ([Environment]::Is64BitOperatingSystem) {
-        if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
-            "aarch64"
-        } else {
-            "x86_64"
-        }
-    } else {
-        "i686"
+    Write-Host "Downloading RustDesk 1.5.1..." -ForegroundColor Cyan
+
+    if (Test-Path $Installer) {
+        Remove-Item $Installer -Force
     }
-
-    $Asset = $Release.assets |
-        Where-Object {
-            $_.name -match "\.exe$" -and
-            $_.name -match $Architecture
-        } |
-        Select-Object -First 1
-
-    if (-not $Asset) {
-        throw "No matching Windows installer found."
-    }
-
-    Write-Host "Version: $($Release.tag_name)" -ForegroundColor Green
-    Write-Host "Downloading: $($Asset.name)" -ForegroundColor Yellow
 
     & curl.exe -fL --retry 5 --retry-delay 3 `
         --connect-timeout 30 `
-        -A "Mozilla/5.0" `
-        $Asset.browser_download_url `
-        -o $Installer
+        $Url -o $Installer
 
     if ($LASTEXITCODE -ne 0 -or
         -not (Test-Path $Installer) -or
         (Get-Item $Installer).Length -lt 1MB) {
-        throw "RustDesk download failed."
+        throw "Download failed or installer is invalid."
     }
 
     Write-Host "Download completed." -ForegroundColor Green
 
-    Write-Host "Starting RustDesk installation..." -ForegroundColor Yellow
+    # Verify digital signature
+    $Signature = Get-AuthenticodeSignature -FilePath $Installer
 
-    $Process = Start-Process `
-        -FilePath $Installer `
-        -ArgumentList "--silent-install" `
-        -Wait -PassThru
-
-    Write-Host "Installer exit code: $($Process.ExitCode)" -ForegroundColor Cyan
-
-    if ($Process.ExitCode -ne 0) {
-        throw "RustDesk installation failed."
+    if ($Signature.Status -ne "Valid") {
+        throw "Installer signature validation failed: $($Signature.Status)"
     }
 
-    Write-Host "RustDesk installed successfully!" -ForegroundColor Green
+    Write-Host "Digital signature is valid." -ForegroundColor Green
+
+    # Silent installation
+    Write-Host "Installing RustDesk..." -ForegroundColor Yellow
+
+    $Process = Start-Process -FilePath $Installer `
+        -ArgumentList "--silent-install" `
+        -Wait `
+        -PassThru
+
+    if ($Process.ExitCode -ne 0) {
+        throw "RustDesk installation failed. Exit code: $($Process.ExitCode)"
+    }
+
+    # Check common installation locations
+    $PossiblePaths = @(
+        "$env:ProgramFiles\RustDesk\rustdesk.exe",
+        "${env:ProgramFiles(x86)}\RustDesk\rustdesk.exe",
+        "$env:LOCALAPPDATA\Programs\RustDesk\rustdesk.exe"
+    )
+
+    $App = $PossiblePaths |
+        Where-Object { Test-Path $_ } |
+        Select-Object -First 1
+
+    if ($App) {
+        Write-Host "RustDesk installed successfully." -ForegroundColor Green
+        Write-Host "Location: $App" -ForegroundColor Gray
+
+        Start-Process -FilePath $App
+    }
+    else {
+        Write-Host "Installation command completed, but RustDesk was not found in the expected locations." -ForegroundColor Yellow
+    }
+
 }
 catch {
     Write-Host "ERROR: $_" -ForegroundColor Red
