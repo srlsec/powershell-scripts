@@ -47,6 +47,11 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-RustDesk.ps1").Content
 ```
 
+### Install TeamViewer
+```
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-TeamViewer.ps1").Content
+```
+
 ### Install Quick Heal Internet Security Essentials
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-QuickHeal.ps1").Content
@@ -75,11 +80,6 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 ### Install Termius
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Termius.ps1").Content
-```
-
-### Install 
-```
-iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Avast.ps1").Content
 ```
 
 ### Install 
