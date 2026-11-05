@@ -44,7 +44,7 @@ iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/
 
 ### Install Rustdesk
 ```
-iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-Rustdesk.ps1").Content
+iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/scripts/Install-RustDesk.ps1").Content
 ```
 
 ### Install Quick Heal Internet Security Essentials
