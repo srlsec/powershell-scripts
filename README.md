@@ -11,6 +11,18 @@ Max
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/systeminfo.ps1").Content
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/systeminfo.ps1" -UseBasicParsing).Content
 ```
+### Clear Caches, Optimize Memory and Free DiskSpace
+```
+irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Clear-Caches.ps1 | iex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Clear-Caches.ps1))) -Preview -All
+
+irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Optimize-Memory.ps1 | iex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Optimize-Memory.ps1))) -ClearClipboard
+
+irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Free-DiskSpace.ps1 | iex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Clear-Caches.ps1))) -All
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/srlsec/powershell-scripts/main/scripts/Free-DiskSpace.ps1))) -DiskCleanup -ComponentCleanup
+```
 ### Optimize Windows
 ```
 iex (iwr -Uri "https://raw.githubusercontent.com/srlsec/powershell-scripts/refs/heads/main/optimize-windows.ps1").Content
